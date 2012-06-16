@@ -18,11 +18,18 @@
 source $(dirname $0)/lib/oo
 source $(dirname $0)/lib/unixbox
 
+# NOTE:
 # If you want to trap EXIT, and want method_missing to work,
 # then your own trap should start with the method_missing call.
 # e.g. trap 'method_missing; echo "Goodbye.";' EXIT
 
+# Basic object creation (box) from class (unixbox)
 new box is unixbox 192.168.0.14
+
+# kwargs are handled like this...
+USER=nobody new box is unixbox 192.168.0.14
+
+# There is an ssh method in unixbox.
 box.ssh ls
 
 # unixbox.mkdir doesn't exist.

@@ -19,11 +19,12 @@ source $(dirname $0)/lib/oo
 function unixbox.new {
     self=$1; shift
     instance_var $self ip $1;
+    instance_var $self username $USER;
 };
 
 function unixbox.ssh {
     self=$1; shift
-    ssh -p3223 cloudscaling@$($self.ip) "$@";
+    ssh $($self.username)@$($self.ip) "$@";
 };
 
 function unixbox.method_missing {
