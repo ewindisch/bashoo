@@ -1,0 +1,48 @@
+# Object-Oriented Bash
+# Write classes as functions in the form of "classname.method"
+# Then, call "class classname"
+# Create new objects with "new classname as object_name"
+# Read the examples.
+# -Eric Windisch
+
+function class {
+    name=$1
+    methods=$(declare -F |
+              sed -n "s/declare -f //; /^${name}\./{ s/^${name}\.//; p; };")
+
+    eval "function $name.methods { echo '${methods[*]}'; };"
+    eval "function $name.set { instance_var \"\$@\"; };"
+}
+
+function instance_var {
+    self=$1
+    var=$2
+    value=$3
+
+    eval "function $self.$var { echo \"$value\"; };"
+}
+
+function new {
+    obj=$1; shift
+    shift # is
+    cls=$1; shift
+    args=$@
+
+    for methead in $($cls.methods); do
+        eval "function ${obj}.${methead} { ${cls}.${methead} ${obj} \"\$@\"; };"
+    done
+
+    $cls.new $obj "$@"
+}
+
+function method_missing {
+    if [ $? -eq 127 ]; then
+        # Below only works with "obj.fun", not "obj.still_obj.fun" (etc)
+        obj=$(echo $BASH_COMMAND | sed 's/ .*$//; s/\..*//')
+        method=$(echo $BASH_COMMAND | sed 's/ .*$//; s/.*\.//')
+        args=${BASH_COMMAND#${obj}.${method}}
+        $obj.method_missing $method $args
+    fi
+}
+
+trap 'method_missing' EXIT
