@@ -6,9 +6,9 @@ source $(dirname $0)/lib/unixbox
 # then your own trap should start with the method_missing call.
 # e.g. trap 'method_missing; echo "Goodbye.";' EXIT
 
-new jumpbox is unixbox 192.168.0.14
-jumpbox.ssh ls
+new box is unixbox 192.168.0.14
+box.ssh ls
 
 # unixbox.mkdir doesn't exist.
 # This is implemented through unixbox.method_missing
-jumpbox.mkdir -p /tmp/woot
+box.mkdir -p /tmp/woot
