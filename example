@@ -24,9 +24,10 @@ source $(dirname $0)/lib/unixbox
 # e.g. trap 'method_missing; echo "Goodbye.";' EXIT
 
 # Basic object creation (box) from class (unixbox)
-new box is unixbox 192.168.0.14
+new box unixbox 192.168.0.14
 
 # kwargs are handled like this...
+# Also, we support an optional 'is' string between object and classnames.
 USER=nobody new box is unixbox 192.168.0.14
 
 # There is an ssh method in unixbox.

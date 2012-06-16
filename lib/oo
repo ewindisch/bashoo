@@ -40,7 +40,7 @@ function instance_var {
 
 function new {
     obj=$1; shift
-    shift # is
+    [ "$1" == "is" ] && shift  # support optional 'is'
     cls=$1; shift
     args=$@
 
