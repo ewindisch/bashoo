@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 #    Copyright 2011 Cloudscaling Group, Inc
@@ -16,12 +16,22 @@
 #    under the License.
 
 source $(dirname $0)/lib/oo
-source $(dirname $0)/lib/unixbox
 
-# NOTE:
-# If you want to trap EXIT, and want method_missing to work,
-# then your own trap should start with the method_missing call.
-# e.g. trap 'method_missing; echo "Goodbye.";' EXIT
+function unixbox::new {
+    self=$1; shift
+    instance_var $self ip $1;
+    instance_var $self username $USER;
+};
+
+function unixbox::ssh {
+    self=$1; shift
+    ssh $($self.username)@$($self.ip) "$@";
+};
+
+function unixbox::method_missing {
+    self=$1; shift
+    $self.ssh "$@"
+}
 
 # Basic object creation (box) from class (unixbox)
 new box unixbox 192.168.0.14
