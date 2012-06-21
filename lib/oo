@@ -41,20 +41,8 @@ function new {
     eval "function $obj.set { shift; instance_var \"\$@\"; };"
 
     for methead in $methods; do
-        eval "function ${obj}.${methead} { ${cls}::${methead} ${obj} \"\$@\"; };"
+        eval "function ${obj}.${methead} { ${cls}::${methead} ${obj} \"\$@\"; };
     done
 
     $cls::new $obj "$@"
 }
-
-function method_missing {
-    if [ $? -eq 127 ]; then
-        # Below only works with "obj.fun", not "obj.still_obj.fun" (etc)
-        obj=$(echo $BASH_COMMAND | sed 's/ .*$//; s/\..*//')
-        method=$(echo $BASH_COMMAND | sed 's/ .*$//; s/.*\.//')
-        args=${BASH_COMMAND#${obj}.${method}}
-        $obj::method_missing $method $args
-    fi
-}
-
-trap 'method_missing' EXIT

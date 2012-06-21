@@ -28,11 +28,6 @@ function unixbox::ssh {
     ssh $($self.username)@$($self.ip) "$@";
 };
 
-function unixbox::method_missing {
-    self=$1; shift
-    $self.ssh "$@"
-}
-
 # Basic object creation (box) from class (unixbox)
 new box unixbox 192.168.0.14
 
@@ -42,7 +37,3 @@ USER=nobody new box is unixbox 192.168.0.14
 
 # There is an ssh method in unixbox.
 box.ssh ls
-
-# unixbox.mkdir doesn't exist.
-# This is implemented through unixbox.method_missing
-box.mkdir -p /tmp/woot
