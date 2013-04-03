@@ -32,6 +32,18 @@ Returning $this is only necessary to support
 method chaining.
 
 
+Instance Variables
+==================
+
+Instance variables are set by calling:
+
+    $self.set varname value
+
+Instance variables are accessed by calling:
+
+    $self.varname
+
+
 Method Chaining
 ===============
 
@@ -66,6 +78,23 @@ This unrolls to:
     Dog::new fido
     Dog::sit fido
     Dog::rollover fido
+
+
+Instance variables
+------------------
+
+Instance variables are defined via instance_var,
+which is curried to $objname.set
+
+    instance_var objname varname value
+
+Practically, from a ::new method, you could use:
+
+    instance_var $self varname value
+
+Normally, one would simply use:
+
+    $self.set varname value
 
 
 Inheritance (experimental)
