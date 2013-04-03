@@ -56,6 +56,51 @@ Call methods in chain:
     $($(new fido is Dog).sit).rollover
 
 
+Inheritance (experimental)
+==========================
+
+This is pretty dirty and incomplete...
+
+    function Animal::new {
+     self=$1; shift
+     $self.set name $1
+    }
+    function Animal::eat {
+     self=$1; shift
+     food_name=$1
+     echo "$($self.name) eats ${food_name}."
+    }
+
+    function Dog::new {
+     self=$1; shift
+     name=$1
+
+     # inheritance
+     new $self is Animal $name
+
+     return $self
+    }
+    function Dog::sit {
+     self=$1
+     echo "$($self.name) sits down."
+     return $self
+    }
+    function Dog::rollover {
+     self=$1
+     echo "$($self.name) rolls over."
+     return $self
+    }
+
+    # name is set to fido
+    new mypet from Dog fido
+    mypet.eat grass
+
+
+This would print:
+
+    "fido eats grass"
+
+
 Implementation
 ==============
 
@@ -80,7 +125,7 @@ This unrolls to:
     Dog::rollover fido
 
 
-Instance variables
+Implementation of instance variables
 ------------------
 
 Instance variables are defined via instance_var,
@@ -95,32 +140,3 @@ Practically, from a ::new method, you could use:
 Normally, one would simply use:
 
     $self.set varname value
-
-
-Inheritance (experimental)
-==========================
-
-This is pretty dirty and incomplete...
-
-    function Animal::eat {
-     self=$1; shift
-     food_name=$1
-     echo "Eats ${food_name}."
-    }
-    function Dog::new {
-     self=$1; shift
-     name=$1
-     instance_var $self name $name
-    }
-    function Dog::sit {
-     self=$1
-     echo "${self.name} sits down."
-    }
-    function Dog::rollover {
-     self=$1
-     echo "${self.name} rolls over."
-    }
-
-    class Dog inherits from Animal
-    new fido from Dog
-    fido.eat grass

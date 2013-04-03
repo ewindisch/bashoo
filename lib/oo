@@ -52,26 +52,3 @@ function new {
         $cls::new $obj "$@"
     fi
 }
-
-function class {
-    # Used to create new classes, usually to declare inheritance.
-    # Allowed Syntax:
-    #   class <obj-name> inherits <class-name>
-    #   class <obj-name> inherits from <class-name>
-    #   class <obj-name> from <class-name>
-    obj=$1; shift
-    [ "$1" == "inherits" ] && shift  # Ignore syntax sugar.
-    [ "$1" == "from" ] && shift  # Ignore syntax sugar.
-    cls=$1; shift
-    args=$@
-
-    methods=$(declare -F |
-              sed -n "s/declare -f //; /^${cls}::/{ s/^${cls}:://; p; };")
-
-    eval "function $obj.methods { echo '${methods[*]}'; };"
-    eval "function $obj.set { shift; instance_var \"\$@\"; };"
-
-    for methead in $methods; do
-        eval "function ${obj}::${methead} { ${cls}::${methead} ${obj} \"\$@\"; };"
-    done
-}
