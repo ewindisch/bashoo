@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-#    Copyright 2011 Cloudscaling Group, Inc
+#    Copyright 2011-2013 Cloudscaling Group, Inc
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -16,7 +16,6 @@
 
 # Object-Oriented Bash
 # Write classes as functions in the form of "classname.method"
-# Then, call "class classname"
 # Create new objects with "new classname as object_name"
 # Read the examples.
 # -Eric Windisch
@@ -29,8 +28,13 @@ function instance_var {
 }
 
 function new {
+    # Create object from class
+    # Syntax:
+    #   new <obj-name> from <class-name>
+    #   new <obj-name> is <class-name>
     obj=$1; shift
-    [ "$1" == "is" ] && shift  # support optional 'is'
+    [ "$1" == "is" ] && shift  # Ignore syntax sugar.
+    [ "$1" == "from" ] && shift  # Ignore syntax sugar.
     cls=$1; shift
     args=$@
 
@@ -41,8 +45,33 @@ function new {
     eval "function $obj.set { shift; instance_var \"\$@\"; };"
 
     for methead in $methods; do
-        eval "function ${obj}.${methead} { ${cls}::${methead} ${obj} \"\$@\"; };
+        eval "function ${obj}.${methead} { ${cls}::${methead} ${obj} \"\$@\"; };"
     done
 
-    $cls::new $obj "$@"
+    if (declare -F | grep "$cls::new\$" >/dev/null); then
+        $cls::new $obj "$@"
+    fi
+}
+
+function class {
+    # Used to create new classes, usually to declare inheritance.
+    # Allowed Syntax:
+    #   class <obj-name> inherits <class-name>
+    #   class <obj-name> inherits from <class-name>
+    #   class <obj-name> from <class-name>
+    obj=$1; shift
+    [ "$1" == "inherits" ] && shift  # Ignore syntax sugar.
+    [ "$1" == "from" ] && shift  # Ignore syntax sugar.
+    cls=$1; shift
+    args=$@
+
+    methods=$(declare -F |
+              sed -n "s/declare -f //; /^${cls}::/{ s/^${cls}:://; p; };")
+
+    eval "function $obj.methods { echo '${methods[*]}'; };"
+    eval "function $obj.set { shift; instance_var \"\$@\"; };"
+
+    for methead in $methods; do
+        eval "function ${obj}::${methead} { ${cls}::${methead} ${obj} \"\$@\"; };"
+    done
 }
