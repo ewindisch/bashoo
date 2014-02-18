@@ -2,6 +2,7 @@
 =============================================
 Download: https://github.com/ewindisch/bashoo
 
+Build status: [![Build Status](https://drone.io/github.com/ewindisch/bashoo/status.png)](https://drone.io/github.com/ewindisch/bashoo/latest)
 
 Installation
 ============
