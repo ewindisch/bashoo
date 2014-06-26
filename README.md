@@ -14,23 +14,21 @@ Basic Usage
 ===========
 
     #!/bin/bash
-    . $(which oo)
+    . oo # https://raw.githubusercontent.com/
+         #         ewindisch/bashoo/master/lib/oo
 
     # Classes are created implicitly through functions
-    function ClsName::new {
-      this=$1; shift
-      args=$@
-      return $this
+    function MsgWriter::new {
+        self=$1; shift
+        msg=$1; shift
+        instance_var $self msg $msg
     }
-    function ClsName::hi {
-      echo "hello world"
+    function MsgWriter::write {
+        self=$1; shift
+        echo $($self.msg)
     }
-
-    new objname is ClsName
-    objname.hi  # this will echo "hello world"
-
-Returning $this is only necessary to support
-method chaining.
+    new terminal is MsgWriter “Hello World”
+    terminal.write
 
 
 Instance Variables
